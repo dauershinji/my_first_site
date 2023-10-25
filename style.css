@@ -1,5 +1,25 @@
 body {
-    width: 100%;
-    height: 100%;
-    background-color: #e1e1e1;
+    background-color: #e0e0e0;
+}
+
+/*header {*/
+/*    background-color: #ffffff;*/
+/*}*/
+/**/
+/*aside {*/
+/*    background-color: #ffffff;*/
+/*    float: left*/
+/*}*/
+/**/
+/*footer {*/
+/*    background-color: #ffffff;*/
+/*}*/
+
+.center {
+    width: 600px;
+    height: 800px;
+    background-color: #a8a8a8;
+    border-radius: 5%;
+    text-align: center;
+    margin: auto;
 }
