@@ -1,4 +1,4 @@
-let input = 'x||y||z||w'
+let input = '(x||y)&&z||w'
 
 /**
  * @param string - логическое выражение
@@ -16,10 +16,6 @@ function variable(string) {
     return elements
 }
 
-function replace(arr_1, arr_2) {
-
-}
-
 /**
  *
  * @param string - логическое выражение
@@ -27,20 +23,31 @@ function replace(arr_1, arr_2) {
  */
 function make_truth_table(string) {
     const array = variable(string)
+    const save = string
     let truth_table = {
-        'False': [],
-        'True': []
+        'True': [],
+        'False': []
     }
     for (let x = 0; x < 2; x++) {
         for (let y = 0; y < 2; y++) {
             for (let z = 0; z < 2; z++) {
                 for (let w = 0; w < 2; w++) {
-                    console.log(x,y,z,w)
+                    string = save
                     string = string.replaceAll(array[0],x.toString())
                     string = string.replaceAll(array[1],y.toString())
                     string = string.replaceAll(array[2],z.toString())
                     string = string.replaceAll(array[3],w.toString())
-                    console.log(string)
+                    let expression = eval(string)
+                    if (expression === 1) {
+                        let changes = truth_table['True']
+                        changes.push([x,y,z,w])
+                        truth_table['True'] = changes
+                    }
+                    else {
+                        let changes = truth_table['False']
+                        changes.push([x,y,z,w])
+                        truth_table['False'] = changes
+                    }
                 }
             }
         }
@@ -48,4 +55,4 @@ function make_truth_table(string) {
     return truth_table
 }
 
-make_truth_table(input, variable(input))
+console.log(make_truth_table(input))
