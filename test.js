@@ -5,7 +5,7 @@
  */
 function variable(string) {
     const array = Array.from(string);
-    const alp = ["!", "&", "|"]
+    const alp = ["!", "&", "|", "(", ")"]
     let elements = []
 
     for (const element of array) {
