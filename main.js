@@ -5,7 +5,7 @@
  */
 function variable(string) {
     const array = Array.from(string);
-    const alp = ["!", "&", "|", "(", ")"]
+    const alp = ["!", "&", "|", "(", ")", "="]
     let elements = []
 
     for (const element of array) {
@@ -18,16 +18,16 @@ function variable(string) {
 }
 
 /**
- * Построение таблицы истинности
+ * Построения таблицы с четырьмя переменными
  * @param string - логическое выражение
- * @returns {{True: *[], False: *[]}} - таблица истинности
+ * @param array - список переменных
+ * @returns {{True: *[], False: *[]}}
  */
-function make_truth_table(string) {
-    const array = variable(string)
+function four_var(string, array) {
     const save = string
     let truth_table = {
-        "True": [],
-        "False": []
+        "True": [array],
+        "False": [array]
     }
 
     for (let x = 0; x < 2; x++) {
@@ -61,6 +61,101 @@ function make_truth_table(string) {
 }
 
 /**
+ * Построение таблицы истинности с тремя переменными
+ * @param string - логическое выражение
+ * @param array - список переменных
+ * @returns {{True: *[], False: *[]}}
+ */
+function three_var(string, array) {
+    const save = string
+    let truth_table = {
+        "True": [array],
+        "False": [array]
+    }
+
+    for (let x = 0; x < 2; x++) {
+        for (let y = 0; y < 2; y++) {
+            for (let z = 0; z < 2; z++) {
+                string = save
+                string = string.replaceAll(array[0],x.toString())
+                string = string.replaceAll(array[1],y.toString())
+                string = string.replaceAll(array[2],z.toString())
+                let expression = eval(string)
+
+                if (expression === 1) {
+                    let changes = truth_table["True"]
+                    changes.push([x,y,z])
+                    truth_table["True"] = changes
+                }
+
+                else {
+                    let changes = truth_table["False"]
+                    changes.push([x,y,z])
+                    truth_table["False"] = changes
+                }
+            }
+        }
+    }
+
+    return truth_table
+}
+
+/**
+ * Построение таблицы истинности с двумя переменными
+ * @param string - логическое выражение
+ * @param array - список переменных
+ * @returns {{True: *[], False: *[]}}
+ */
+function two_var(string, array) {
+    const save = string
+    let truth_table = {
+        "True": [array],
+        "False": [array]
+    }
+
+    for (let x = 0; x < 2; x++) {
+        for (let y = 0; y < 2; y++) {
+            string = save
+            string = string.replaceAll(array[0],x.toString())
+            string = string.replaceAll(array[1],y.toString())
+            let expression = eval(string)
+
+            if (expression === 1) {
+                let changes = truth_table["True"]
+                changes.push([x,y])
+                truth_table["True"] = changes
+            }
+
+            else {
+                let changes = truth_table["False"]
+                changes.push([x,y])
+                truth_table["False"] = changes
+            }
+
+        }
+    }
+
+    return truth_table
+}
+
+/**
+ * Возвращение таблицы истинности по количеству переменных
+ * @param string - логическое выражение
+ * @returns {{True: *[], False: *[]}} - таблица истинности
+ */
+function make_truth_table(string) {
+    const array = variable(string)
+    switch (array.length) {
+        case 2:
+            return two_var(string, array)
+        case 3:
+            return three_var(string, array)
+        case 4:
+            return four_var(string, array)
+    }
+}
+
+/**
  * Получение ввода пользователя в HTML
  * @returns {*} - ввод
  */
@@ -78,13 +173,21 @@ function make_html_table() {
 
     for (let key in truth_table) {
         let row = document.createElement("tr")
-        row.innerHTML = `<td colspan="2">${key}</td>`
+        row.innerHTML = `<td colspan="value">${key}</td>`
         document.querySelector(".center_table").appendChild(row)
 
         for (let i = 0; i < truth_table[key].length; i++) {
             let row = document.createElement("tr")
-            row.innerHTML = `<td>${truth_table[key][i]}</td>`
-            document.querySelector(".center_table").appendChild(row)
+
+            if (i === 0) {
+                row.innerHTML = `<td colspan="variable">${truth_table[key][i]}</td>`
+                document.querySelector(".center_table").appendChild(row)
+            }
+
+            else {
+                row.innerHTML = `<td>${truth_table[key][i]}</td>`
+                document.querySelector(".center_table").appendChild(row)
+            }
         }
     }
 }

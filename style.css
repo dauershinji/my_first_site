@@ -23,3 +23,19 @@ body {
     text-align: center;
     margin: auto;
 }
+
+.center_table td[colspan="value"] {
+    background: #bb0000;
+}
+
+.center_table td[colspan="variable"] {
+    background: #91ef91;
+}
+
+.center_table td{
+    border: 1px solid Black;
+    padding: 10px;
+    font-size: 20px;
+    background: #ffffff;
+}
+
