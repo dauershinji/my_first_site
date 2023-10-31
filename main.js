@@ -45,7 +45,7 @@ function input_rework(string) {
  * @param string - логическое выражение
  * @returns {*[]} - список переменных в логическом выражении
  */
-function variable(string) {
+function get_expression_var(string) {
     const array = Array.from(string);
     const alp = ["!", "&", "|", "(", ")", "="]
     let elements = []
@@ -181,7 +181,7 @@ function two_var(string, array) {
  */
 function make_truth_table(string) {
     string = input_rework(string)
-    const array = variable(string)
+    const array = get_expression_var(string)
 
     switch (array.length) {
         case 2:
