@@ -2,33 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ЕГЭ №2</title>
+    <title>Таблицы истинности</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!--    <header>-->
-<!--        <div>-->
-<!--            <p>РЕШЕНИЕ</p>-->
-<!--        </div>-->
-<!--    </header>-->
-<!--    <aside>-->
-<!--        <div>-->
-<!--            <p>ПЕЧЕНЬКИ</p>-->
-<!--        </div>-->
-<!--    </aside>-->
+    <header>
+        <div></div>
+    </header>
+    <aside>
+        <div></div>
+    </aside>
     <main>
         <div class="center">
-            <label for="inputObject">Введите выражение:</label>
-            <input type="text" id="inputObject">
-            <button onclick="make_html_table()">Решить</button>
+            <div class="input">
+                <label for="inputObject">Введите выражение:</label>
+                <input type="text" id="inputObject">
+                <button onclick="make_html_table()">Решить</button>
+            </div>
+            <div class="input_button">
+                <button onclick="add_to_input('x')">x</button>
+                <button onclick="add_to_input('y')">y</button>
+                <button onclick="add_to_input('z')">z</button>
+                <button onclick="add_to_input('w')">w</button>
+                <button onclick="add_to_input('(')">(</button>
+                <button onclick="add_to_input(')')">)</button>
+                <button onclick="add_to_input('≡')">≡</button>
+                <button onclick="add_to_input('¬')">¬</button>
+                <button onclick="add_to_input('∧')">∧</button>
+                <button onclick="add_to_input('∨')">∨</button>
+                <button onclick="add_to_input('→')">→</button>
+                <button onclick="add_to_input(' ')">Пробел</button>
+                <button onclick="add_to_input('')">Стереть</button>
+            </div>
             <div class="center_table"></div>
         </div>
     </main>
-<!--    <footer>-->
-<!--        <div>-->
-<!--            <p>ИНФОРМАЦИЯ</p>-->
-<!--        </div>-->
-<!--    </footer>-->
+    <footer>
+        <div></div>
+    </footer>
     <script src="main.js"></script>
 </body>
 </html>

@@ -203,6 +203,18 @@ function get_expression(){
 }
 
 /**
+ * Добавление нужного значение в конец вывода
+ * @param sign - значение для добавления
+ */
+function add_to_input(sign){
+    if (sign === ''){
+        document.getElementById("inputObject").value = ''
+    } else{
+        document.getElementById("inputObject").value += sign
+    }
+}
+
+/**
  * Построение таблицы HTML
  */
 function make_html_table() {
