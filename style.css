@@ -37,5 +37,17 @@ header {
 
 .input_button {
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+table {
+    max-height: 400px;
+    max-width: 400px;
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #000000;
+    padding: 10px;
 }

@@ -32,7 +32,28 @@ function input_rework(string) {
                 string = string.slice(0, index-1) + "!" + string.slice(index-1)
                 string = string.replace("→", "||")
             } else {
-                // Сделать работу со скобками
+                let counter = 0
+                for (let second_index = index-1; second_index >= 0; second_index--) {
+
+                    if (string[second_index] === ")") {
+                        counter += 1
+                    } else if (string[second_index] === "(") {
+                        counter -= 1
+                    }
+
+                    if (counter === 0) {
+                        index = second_index
+                        break
+                    }
+                }
+
+                if (index === 0) {
+                    string = "!" + string
+                } else {
+                    string = string.slice(0, index) + "!" + string.slice(index)
+                }
+
+                string = string.replace("→", "||")
             }
         }
     }
@@ -218,24 +239,67 @@ function add_to_input(sign){
  * Построение таблицы HTML
  */
 function make_html_table() {
-    const truth_table = make_truth_table(get_expression())
-    document.querySelector(".center_table").innerHTML = `<table class="table"></table>`
+    const expression = get_expression()
+    const truth_table = make_truth_table(expression)
+    const table_length = truth_table["True"][0].length
+    document.querySelector(".center_table").innerHTML = `<table class="main_table"></table>`
 
     for (let key in truth_table) {
         let row = document.createElement("tr")
-        row.innerHTML = `<th colspan="0">${key}</th>`
+        row.innerHTML = `
+            <th colspan="${table_length+1}">${key}</th>
+        `
         document.querySelector(".center_table").appendChild(row)
 
-        // сделать так, чтобы создавалось ТОЛЬКО ПО ДВА TR для True и False
         for (let i = 0; i < truth_table[key].length; i++) {
             let row = document.createElement("tr")
 
-            if (i === 0) {
-                    row.innerHTML = `<td colspan="0">${truth_table[key][0]}</td>`
+            switch (table_length) {
+                case 2:
+                    row.innerHTML = `
+                        <td>${truth_table[key][i][0]}</td>
+                        <td>${truth_table[key][i][1]}</td>
+                    `
+
+                    if (i === 0) {
+                        row.innerHTML += `<td>${expression}</td>`
+                    } else {
+                        row.innerHTML += `<td>${key}</td>`
+                    }
+
                     document.querySelector(".center_table").appendChild(row)
-                } else {
-                    row.innerHTML = `<td colspan="0">${truth_table[key][i]}</td>`
+                    break
+                case 3:
+                    row.innerHTML = `
+                        <td>${truth_table[key][i][0]}</td>
+                        <td>${truth_table[key][i][1]}</td>
+                        <td>${truth_table[key][i][2]}</td>
+                    `
+
+                    if (i === 0) {
+                        row.innerHTML += `<td>${expression}</td>`
+                    } else {
+                        row.innerHTML += `<td>${key}</td>`
+                    }
+
                     document.querySelector(".center_table").appendChild(row)
+                    break
+                case 4:
+                    row.innerHTML = `
+                        <td>${truth_table[key][i][0]}</td>
+                        <td>${truth_table[key][i][1]}</td>
+                        <td>${truth_table[key][i][2]}</td>
+                        <td>${truth_table[key][i][3]}</td>
+                    `
+
+                    if (i === 0) {
+                        row.innerHTML += `<td>${expression}</td>`
+                    } else {
+                        row.innerHTML += `<td>${key}</td>`
+                    }
+
+                    document.querySelector(".center_table").appendChild(row)
+                    break
             }
         }
     }
