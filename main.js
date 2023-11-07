@@ -32,7 +32,7 @@ function input_rework(string) {
                 string = string.slice(0, index-1) + "!" + string.slice(index-1)
                 string = string.replace("→", "||")
             } else {
-                //pass
+                // Сделать работу со скобками
             }
         }
     }
@@ -223,18 +223,19 @@ function make_html_table() {
 
     for (let key in truth_table) {
         let row = document.createElement("tr")
-        row.innerHTML = `<td colspan="value">${key}</td>`
+        row.innerHTML = `<th colspan="0">${key}</th>`
         document.querySelector(".center_table").appendChild(row)
 
+        // сделать так, чтобы создавалось ТОЛЬКО ПО ДВА TR для True и False
         for (let i = 0; i < truth_table[key].length; i++) {
             let row = document.createElement("tr")
 
             if (i === 0) {
-                row.innerHTML = `<td colspan="variable">${truth_table[key][i]}</td>`
-                document.querySelector(".center_table").appendChild(row)
-            } else {
-                row.innerHTML = `<td>${truth_table[key][i]}</td>`
-                document.querySelector(".center_table").appendChild(row)
+                    row.innerHTML = `<td colspan="0">${truth_table[key][0]}</td>`
+                    document.querySelector(".center_table").appendChild(row)
+                } else {
+                    row.innerHTML = `<td colspan="0">${truth_table[key][i]}</td>`
+                    document.querySelector(".center_table").appendChild(row)
             }
         }
     }
