@@ -1,216 +1,225 @@
 /**
  * Переработка логического выражения в синтаксис JS
- * @param string - входное логическое выражение
- * @returns {string} - переработанное логическое выражение
+ * @param expression - входное логическое выражение
+ * @returns {expression} - переработанное логическое выражение
  */
-function input_rework(string) {
-    if (string.indexOf(" ") !== -1) { // " " -> ""
-        string = string.replaceAll(" ", "");
+function expression_rework(expression) {
+    if (expression.indexOf(" ") !== -1) { // " " -> ""
+        expression = expression.replaceAll(" ", "");
     }
 
-    if (string.indexOf("≡") !== -1) { // "≡" -> "==="
-        string = string.replaceAll("≡", "===")
+    if (expression.indexOf("≡") !== -1) { // "≡" -> "==="
+        expression = expression.replaceAll("≡", "===");
     }
 
-    if (string.indexOf("¬") !== -1) { // "¬" -> "!"
-        string = string.replaceAll("¬", "!")
+    if (expression.indexOf("¬") !== -1) { // "¬" -> "!"
+        expression = expression.replaceAll("¬", "!");
     }
 
-    if (string.indexOf("∧") !== -1) { // "∧" -> "&&"
-        string = string.replaceAll("∧", "&&")
+    if (expression.indexOf("∧") !== -1) { // "∧" -> "&&"
+        expression = expression.replaceAll("∧", "&&");
     }
 
-    if (string.indexOf("∨") !== -1) { // "∨" -> "||"
-        string = string.replaceAll("∨", "||")
+    if (expression.indexOf("∨") !== -1) { // "∨" -> "||"
+        expression = expression.replaceAll("∨", "||");
     }
 
-    if (string.indexOf("→") !== -1) { // "→" -> "!a||b"
-        while (string.indexOf("→") !== -1) {
-            let index = string.indexOf("→")
+    if (expression.indexOf("→") !== -1) { // "→" -> "!a||b"
+        while (expression.indexOf("→") !== -1) {
+            let index = expression.indexOf("→");
 
-            if (string[index-1] !== ")") {
-                string = string.slice(0, index-1) + "!" + string.slice(index-1)
-                string = string.replace("→", "||")
+            if (expression[index-1] !== ")") {
+                expression = expression.slice(0, index-1) + "!" + expression.slice(index-1);
+                expression = expression.replace("→", "||");
             } else {
-                let counter = 0
+                let counter = 0;
                 for (let second_index = index-1; second_index >= 0; second_index--) {
 
-                    if (string[second_index] === ")") {
-                        counter += 1
-                    } else if (string[second_index] === "(") {
-                        counter -= 1
+                    if (expression[second_index] === ")") {
+                        counter += 1;
+                    } else if (expression[second_index] === "(") {
+                        counter -= 1;
                     }
 
                     if (counter === 0) {
-                        index = second_index
-                        break
+                        index = second_index;
+                        break;
                     }
                 }
 
                 if (index === 0) {
-                    string = "!" + string
+                    expression = "!" + expression;
                 } else {
-                    string = string.slice(0, index) + "!" + string.slice(index)
+                    expression = expression.slice(0, index) + "!" + expression.slice(index);
                 }
 
-                string = string.replace("→", "||")
+                expression = expression.replace("→", "||");
             }
         }
     }
 
-    return string
+    return expression;
 }
 
 /**
  * Возвращение списка переменных в логическом выражении
- * @param string - логическое выражение
+ * @param expression - логическое выражение
  * @returns {*[]} - список переменных в логическом выражении
  */
-function get_expression_var(string) {
-    const array = Array.from(string);
-    const alp = ["!", "&", "|", "(", ")", "="]
-    let elements = []
+function get_expression_elements(expression) {
+    const array = Array.from(expression);
+    const alp = ["!", "&", "|", "(", ")", "="];
+    let elements = [];
 
     for (const element of array) {
         if (alp.indexOf(element) === -1) {
-            elements.push(element)
+            if (elements.indexOf(element) === -1) {
+                elements.push(element);
+            }
         }
     }
 
-    return elements
+    return elements.sort();
 }
 
 /**
  * Построения таблицы с четырьмя переменными
- * @param string - логическое выражение
- * @param array - список переменных
+ * @param expression - логическое выражение после переработки
+ * @param elements - список переменных
+ * @param initial - начально выражение
  * @returns {{True: *[], False: *[]}}
  */
-function four_var(string, array) {
-    const save = string
+function four_elements(expression, elements, initial) {
+    const save = expression;
     let truth_table = {
-        "True": [array],
-        "False": [array]
-    }
+        "Elements": [...elements, initial],
+        "True": [],
+        "False": []
+    };
 
     for (let x = 0; x < 2; x++) {
         for (let y = 0; y < 2; y++) {
             for (let z = 0; z < 2; z++) {
                 for (let w = 0; w < 2; w++) {
-                    string = save
-                    string = string.replaceAll(array[0],x.toString())
-                    string = string.replaceAll(array[1],y.toString())
-                    string = string.replaceAll(array[2],z.toString())
-                    string = string.replaceAll(array[3],w.toString())
-                    let expression = eval(string)
+                    expression = save;
+                    expression = expression.replaceAll(elements[0],x.toString());
+                    expression = expression.replaceAll(elements[1],y.toString());
+                    expression = expression.replaceAll(elements[2],z.toString());
+                    expression = expression.replaceAll(elements[3],w.toString());
+                    let expression_value = eval(expression);
 
-                    if (expression === 1 || expression === true) {
-                        let changes = truth_table["True"]
-                        changes.push([x,y,z,w])
-                        truth_table["True"] = changes
+                    if (expression_value === 1 || expression_value === true) {
+                        let changes = truth_table["True"];
+                        changes.push([x,y,z,w]);
+                        truth_table["True"] = changes;
                     } else {
-                        let changes = truth_table["False"]
-                        changes.push([x,y,z,w])
-                        truth_table["False"] = changes
+                        let changes = truth_table["False"];
+                        changes.push([x,y,z,w]);
+                        truth_table["False"] = changes;
                     }
                 }
             }
         }
     }
 
-    return truth_table
+    return truth_table;
 }
 
 /**
  * Построение таблицы истинности с тремя переменными
- * @param string - логическое выражение
- * @param array - список переменных
+ * @param expression - логическое выражение после переработки
+ * @param elements - список переменных
+ * @param initial - начально выражение
  * @returns {{True: *[], False: *[]}}
  */
-function three_var(string, array) {
-    const save = string
+function three_elements(expression, elements, initial) {
+    const save = expression;
     let truth_table = {
-        "True": [array],
-        "False": [array]
-    }
+        "Elements": [...elements, initial],
+        "True": [],
+        "False": []
+    };
 
     for (let x = 0; x < 2; x++) {
         for (let y = 0; y < 2; y++) {
             for (let z = 0; z < 2; z++) {
-                string = save
-                string = string.replaceAll(array[0],x.toString())
-                string = string.replaceAll(array[1],y.toString())
-                string = string.replaceAll(array[2],z.toString())
-                let expression = eval(string)
+                expression = save;
+                expression = expression.replaceAll(elements[0],x.toString());
+                expression = expression.replaceAll(elements[1],y.toString());
+                expression = expression.replaceAll(elements[2],z.toString());
+                let expression_value = eval(expression);
 
-                if (expression === 1 || expression === true) {
-                    let changes = truth_table["True"]
-                    changes.push([x,y,z])
-                    truth_table["True"] = changes
+                if (expression_value === 1 || expression_value === true) {
+                    let changes = truth_table["True"];
+                    changes.push([x,y,z]);
+                    truth_table["True"] = changes;
                 } else {
-                    let changes = truth_table["False"]
-                    changes.push([x,y,z])
-                    truth_table["False"] = changes
+                    let changes = truth_table["False"];
+                    changes.push([x,y,z]);
+                    truth_table["False"] = changes;
                 }
             }
         }
     }
 
-    return truth_table
+    return truth_table;
 }
 
 /**
  * Построение таблицы истинности с двумя переменными
- * @param string - логическое выражение
- * @param array - список переменных
+ * @param expression - логическое выражение после переработки
+ * @param elements - список переменных
+ * @param initial - начально выражение
  * @returns {{True: *[], False: *[]}}
  */
-function two_var(string, array) {
-    const save = string
+function two_elements(expression, elements, initial) {
+    const save = expression;
     let truth_table = {
-        "True": [array],
-        "False": [array]
-    }
+        "Elements": [...elements, initial],
+        "True": [],
+        "False": []
+    };
 
     for (let x = 0; x < 2; x++) {
         for (let y = 0; y < 2; y++) {
-            string = save
-            string = string.replaceAll(array[0],x.toString())
-            string = string.replaceAll(array[1],y.toString())
-            let expression = eval(string)
-
-            if (expression === 1 || expression === true) {
-                let changes = truth_table["True"]
-                changes.push([x,y])
-                truth_table["True"] = changes
+            expression = save
+            expression = expression.replaceAll(elements[0],x.toString());
+            expression = expression.replaceAll(elements[1],y.toString());
+            let expression_value = eval(expression)
+;
+            if (expression_value === 1 || expression_value === true) {
+                let changes = truth_table["True"];
+                changes.push([x,y]);
+                truth_table["True"] = changes;
             } else {
-                let changes = truth_table["False"]
-                changes.push([x,y])
-                truth_table["False"] = changes
+                let changes = truth_table["False"];
+                changes.push([x,y]);
+                truth_table["False"] = changes;
             }
 
         }
     }
 
-    return truth_table
+    return truth_table;
 }
 
 /**
  * Возвращение таблицы истинности по количеству переменных
- * @param string - логическое выражение
+ * @param expression - логическое выражение
  * @returns {{True: *[], False: *[]}} - таблица истинности
  */
-function make_truth_table(string) {
-    string = input_rework(string)
-    const array = get_expression_var(string)
+function make_truth_table(expression) {
+    const initial = expression;
+    expression = expression_rework(expression);
+    const elements = get_expression_elements(expression);
 
-    switch (array.length) {
+    switch (elements.length) {
         case 2:
-            return two_var(string, array)
+            return two_elements(expression, elements, initial);
         case 3:
-            return three_var(string, array)
+            return three_elements(expression, elements, initial);
         case 4:
-            return four_var(string, array)
+            return four_elements(expression, elements, initial);
     }
 }
 
@@ -219,8 +228,8 @@ function make_truth_table(string) {
  * @returns {*} - ввод
  */
 function get_expression(){
-    let input = document.getElementById("inputObject")
-    return input.value
+    let input = document.getElementById("inputObject");
+    return input.value;
 }
 
 /**
@@ -229,9 +238,9 @@ function get_expression(){
  */
 function add_to_input(sign){
     if (sign === ''){
-        document.getElementById("inputObject").value = ''
+        document.getElementById("inputObject").value = '';
     } else{
-        document.getElementById("inputObject").value += sign
+        document.getElementById("inputObject").value += sign;
     }
 }
 
@@ -239,68 +248,33 @@ function add_to_input(sign){
  * Построение таблицы HTML
  */
 function make_html_table() {
-    const expression = get_expression()
-    const truth_table = make_truth_table(expression)
-    const table_length = truth_table["True"][0].length
-    document.querySelector(".center_table").innerHTML = `<table class="main_table"></table>`
+    const expression = get_expression();
+    const truth_table = make_truth_table(expression);
+    document.querySelector(".center_table").innerHTML = `<table class="main_table"></table>`;
 
-    for (let key in truth_table) {
-        let row = document.createElement("tr")
-        row.innerHTML = `
-            <th colspan="${table_length+1}">${key}</th>
-        `
-        document.querySelector(".center_table").appendChild(row)
+    let row = document.createElement("tr");
+    row.innerHTML = ``;
+    for (const element of truth_table["Elements"]) {
+        row.innerHTML += `<th colspan="1">${element}</th>`;
+    }
+    document.querySelector(".center_table").appendChild(row);
 
-        for (let i = 0; i < truth_table[key].length; i++) {
-            let row = document.createElement("tr")
+    for (let key of ["True", "False"]) {
+        for (let index in truth_table[key]) {
+            let row = document.createElement("tr");
+            row.innerHTML = ``
 
-            switch (table_length) {
-                case 2:
-                    row.innerHTML = `
-                        <td>${truth_table[key][i][0]}</td>
-                        <td>${truth_table[key][i][1]}</td>
-                    `
-
-                    if (i === 0) {
-                        row.innerHTML += `<td>${expression}</td>`
-                    } else {
-                        row.innerHTML += `<td>${key}</td>`
-                    }
-
-                    document.querySelector(".center_table").appendChild(row)
-                    break
-                case 3:
-                    row.innerHTML = `
-                        <td>${truth_table[key][i][0]}</td>
-                        <td>${truth_table[key][i][1]}</td>
-                        <td>${truth_table[key][i][2]}</td>
-                    `
-
-                    if (i === 0) {
-                        row.innerHTML += `<td>${expression}</td>`
-                    } else {
-                        row.innerHTML += `<td>${key}</td>`
-                    }
-
-                    document.querySelector(".center_table").appendChild(row)
-                    break
-                case 4:
-                    row.innerHTML = `
-                        <td>${truth_table[key][i][0]}</td>
-                        <td>${truth_table[key][i][1]}</td>
-                        <td>${truth_table[key][i][2]}</td>
-                        <td>${truth_table[key][i][3]}</td>
-                    `
-
-                    if (i === 0) {
-                        row.innerHTML += `<td>${expression}</td>`
-                    } else {
-                        row.innerHTML += `<td>${key}</td>`
-                    }
-
-                    document.querySelector(".center_table").appendChild(row)
-                    break
+            for (let value of truth_table[key][index]) {
+                row.innerHTML += `<td>${value}</td>`;
             }
+
+            if (key === "True") {
+                row.innerHTML += `<td>0</td>`;
+            } else {
+                row.innerHTML += `<td>1</td>`;
+            }
+
+            document.querySelector(".center_table").appendChild(row);
         }
     }
 }
