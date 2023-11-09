@@ -269,9 +269,9 @@ function make_html_table() {
             }
 
             if (key === "True") {
-                row.innerHTML += `<td>0</td>`;
-            } else {
                 row.innerHTML += `<td>1</td>`;
+            } else {
+                row.innerHTML += `<td>0</td>`;
             }
 
             document.querySelector(".center_table").appendChild(row);
